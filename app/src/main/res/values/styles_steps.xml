@@ -1,0 +1,3 @@
+<resources>
+    <style name="step_adapterItem_title" parent="ingredient_adapterItem_name"/>
+</resources>

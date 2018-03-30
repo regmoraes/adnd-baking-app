@@ -1,0 +1,4 @@
+<resources>
+    <string name="recipe_details_activity_title">Recipe Details</string>
+    <string name="recipes_loading_error">Cannot fetch recipes :'(</string>
+</resources>

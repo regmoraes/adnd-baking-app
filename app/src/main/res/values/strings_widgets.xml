@@ -1,0 +1,9 @@
+<resources>
+    <string name="widget_add_recipe">Add to Widget</string>
+    <string name="widget_recipe_added">Recipe added to widget</string>
+
+    <string name="widget_add">Add widget</string>
+    <string name="widget_recipe_title">Recipe Title</string>
+    <string name="widget_empty">No recipes added</string>
+    <string name="widget_shared_prefs" translatable="false">RecipeWidget</string>
+</resources>
