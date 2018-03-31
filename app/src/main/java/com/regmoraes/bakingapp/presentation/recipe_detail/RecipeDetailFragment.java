@@ -34,7 +34,7 @@ public class RecipeDetailFragment extends Fragment implements RecipeDetailsAdapt
     private RecipeDetailViewModel viewModel;
     private FragmentRecipeDetailBinding viewBinding;
 
-    private RecipeDetailsAdapter ingredientsAdapter;
+    private RecipeDetailsAdapter recipeDetailsAdapter;
     private RecipeDetailsAdapter.OnStepClickListener listener;
 
     private Recipe recipe;
@@ -72,12 +72,14 @@ public class RecipeDetailFragment extends Fragment implements RecipeDetailsAdapt
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        LinearLayoutManager ingredientsLayoutManager = new LinearLayoutManager(view.getContext());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
 
-        ingredientsAdapter = new RecipeDetailsAdapter(this);
-        ingredientsAdapter.setData(recipe.getIngredients(), recipe.getSteps());
-        viewBinding.recyclerViewIngredients.setLayoutManager(ingredientsLayoutManager);
-        viewBinding.recyclerViewIngredients.setAdapter(ingredientsAdapter);
+        viewBinding.recyclerViewIngredientsAndSteps.setLayoutManager(layoutManager);
+
+        recipeDetailsAdapter = new RecipeDetailsAdapter(this);
+        recipeDetailsAdapter.setData(recipe.getIngredients(), recipe.getSteps());
+
+        viewBinding.recyclerViewIngredientsAndSteps.setAdapter(recipeDetailsAdapter);
     }
 
     @Override

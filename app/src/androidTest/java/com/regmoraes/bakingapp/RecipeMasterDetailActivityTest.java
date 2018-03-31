@@ -1,15 +1,14 @@
 package com.regmoraes.bakingapp;
 
 import android.content.Intent;
-import android.support.test.espresso.NoMatchingViewException;
+import android.content.res.Resources;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.regmoraes.bakingapp.data.model.Recipe;
-import com.regmoraes.bakingapp.data.model.Step;
 import com.regmoraes.bakingapp.presentation.recipe_detail.RecipeMasterDetailActivity;
 import com.regmoraes.bakingapp.presentation.step_detail.StepDetailActivity;
 import com.regmoraes.bakingapp.util.InstrumentationTestDataMock;
@@ -26,11 +25,10 @@ import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.isInternal;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -60,46 +58,49 @@ public class RecipeMasterDetailActivityTest {
             };
 
     @Test
-    public void all_steps_areShown() {
+    public void all_steps_ingredients_and_headers_areShown() {
 
         int stepsCount = recipe.getSteps().size();
-
-        onView(withId(R.id.recyclerView_steps))
-                .check(new RecyclerViewItemCountAssertion(stepsCount));
-    }
-
-    @Test
-    public void all_ingredients_areShown() {
-
         int ingredientsCount = recipe.getIngredients().size();
+        int headersCount = 1;
+        int totalItems = stepsCount +ingredientsCount + headersCount;
 
-        onView(withId(R.id.recyclerView_ingredients))
-                .check(new RecyclerViewItemCountAssertion(ingredientsCount));
+        onView(withId(R.id.recyclerView_ingredients_and_steps))
+                .check(new RecyclerViewItemCountAssertion(totalItems));
     }
 
     @Test
     public void click_on_step_opens_StepDetail() {
 
-        int position = 0;
-        Step step = recipe.getSteps().get(position);
+        int ingredientsCount = recipe.getIngredients().size();
+        int headersCount = 1;
 
-        onView(withId(R.id.recyclerView_steps))
-                .perform(RecyclerViewActions.actionOnItemAtPosition(position, click()));
+        int stepRealPosition = 0;
 
-        try {
+        int stepPositionOnList = (ingredientsCount + headersCount) + stepRealPosition;
 
-            // Check if Step Detail is show on Tablet layouts
-            onView(withText(step.getDescription())).check(matches(isDisplayed()));
+        onView(withId(R.id.recyclerView_ingredients_and_steps))
+                .perform(RecyclerViewActions.actionOnItemAtPosition(stepPositionOnList, click()));
 
-        } catch (NoMatchingViewException exception) {
+        boolean isTablet = getResources().getBoolean(R.bool.isTablet);
 
-            // Check if Step Detail is show on Phone layouts
+        if(isTablet) {
+
+            onView(allOf(
+                    withId(R.id.textView_step_description),
+                    withText(recipe.getSteps().get(stepRealPosition).getDescription())
+            )).check(matches(isDisplayed()));
+
+        } else {
             intended(allOf(hasComponent(StepDetailActivity.class.getName()), isInternal()));
         }
     }
 
     @Test
     public void show_player_according_to_videoUrl_presence() {
+
+        int ingredientsCount = recipe.getIngredients().size();
+        int headersCount = 1;
 
         int stepWithVideoPosition = -1;
 
@@ -108,32 +109,35 @@ public class RecipeMasterDetailActivityTest {
             if (recipe.getSteps().get(i).getVideoURL() != null
                     && !recipe.getSteps().get(i).getVideoURL().isEmpty()) {
 
-                stepWithVideoPosition = i;
+                stepWithVideoPosition = (ingredientsCount + headersCount) + i;
                 break;
             }
         }
 
-        onView(withId(R.id.recyclerView_steps))
+        onView(withId(R.id.recyclerView_ingredients_and_steps))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(stepWithVideoPosition, click()));
 
-        try {
+        boolean isTablet = getResources().getBoolean(R.bool.isTablet);
 
-            ViewInteraction playerInteraction =
-                    onView(allOf(withId(R.id.playerView),
-                    withClassName(is(SimpleExoPlayer.class.getName()))));
+        if(isTablet) {
 
-            // Check if Step Detail is show on Tablet layouts
+            ViewInteraction playerInteraction = onView(withId(R.id.playerView));
+
+
             if (stepWithVideoPosition >= 0) {
                 playerInteraction.check(matches(isDisplayed()));
             } else {
-                playerInteraction.check(matches(isDisplayed()));
+                playerInteraction.check(matches(not(isDisplayed())));
             }
 
-        } catch (NoMatchingViewException exception) {
+        } else {
 
-            // Check if Step Detail is show on Phone layouts
             intended(allOf(hasComponent(StepDetailActivity.class.getName()), isInternal()));
         }
 
+    }
+
+    private Resources getResources() {
+        return InstrumentationRegistry.getTargetContext().getResources();
     }
 }
