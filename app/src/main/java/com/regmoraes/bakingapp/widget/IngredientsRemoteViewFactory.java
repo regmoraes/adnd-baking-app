@@ -69,10 +69,13 @@ public class IngredientsRemoteViewFactory implements RemoteViewsService.RemoteVi
 
         Ingredient ingredient = ingredients.get(position);
 
-        String title = String.format(mContext.getString(R.string.ingredient_title),
-                ingredient.getQuantity(), ingredient.getMeasure(), ingredient.getName());
+        String title = ingredient.getName();
+
+        String quantityAndMeasure = String.format(mContext.getString(R.string.ingredient_quantity_and_measure),
+                ingredient.getQuantity(), ingredient.getMeasure());
 
         views.setTextViewText(R.id.textView_ingredient_title, title);
+        views.setTextViewText(R.id.textView_ingredient_quantity_and_measure, quantityAndMeasure);
 
         Intent fillIntent = new Intent();
         fillIntent.putExtra(Recipe.class.getSimpleName(), recipe);

@@ -4,4 +4,6 @@
     <item android:drawable="@color/colorPrimaryLight" android:state_activated="true" />
 
     <item android:drawable="@color/colorPrimaryLight" android:state_selected="true" />
+
+    <item android:drawable="@color/colorPrimary"/>
 </selector>

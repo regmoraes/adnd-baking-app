@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,16 +27,15 @@ import javax.inject.Inject;
 /**
  * Copyright {2018} {Rômulo Eduardo G. Moraes}
  **/
-public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnStepClickListener {
+public class RecipeDetailFragment extends Fragment implements RecipeDetailsAdapter.OnStepClickListener {
 
     @Inject
     public RecipeDetailViewModelFactory viewModelFactory;
     private RecipeDetailViewModel viewModel;
     private FragmentRecipeDetailBinding viewBinding;
 
-    private IngredientsAdapter ingredientsAdapter;
-    private StepsAdapter stepsAdapter;
-    private StepsAdapter.OnStepClickListener listener;
+    private RecipeDetailsAdapter ingredientsAdapter;
+    private RecipeDetailsAdapter.OnStepClickListener listener;
 
     private Recipe recipe;
 
@@ -76,29 +74,10 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
 
         LinearLayoutManager ingredientsLayoutManager = new LinearLayoutManager(view.getContext());
 
-        DividerItemDecoration ingredientsDividerItemDecoration =
-                new DividerItemDecoration(viewBinding.recyclerViewIngredients.getContext(),
-                        ingredientsLayoutManager.getOrientation());
-
-        ingredientsAdapter = new IngredientsAdapter();
-        ingredientsAdapter.setData(recipe.getIngredients());
-
+        ingredientsAdapter = new RecipeDetailsAdapter(this);
+        ingredientsAdapter.setData(recipe.getIngredients(), recipe.getSteps());
         viewBinding.recyclerViewIngredients.setLayoutManager(ingredientsLayoutManager);
-        viewBinding.recyclerViewIngredients.addItemDecoration(ingredientsDividerItemDecoration);
         viewBinding.recyclerViewIngredients.setAdapter(ingredientsAdapter);
-
-        LinearLayoutManager stepsLayoutManager = new LinearLayoutManager(view.getContext());
-
-        DividerItemDecoration stepsDividerItemDecoration =
-                new DividerItemDecoration(viewBinding.recyclerViewSteps.getContext(),
-                        stepsLayoutManager.getOrientation());
-
-        stepsAdapter = new StepsAdapter(this);
-        stepsAdapter.setData(recipe.getSteps());
-
-        viewBinding.recyclerViewSteps.setLayoutManager(stepsLayoutManager);
-        viewBinding.recyclerViewSteps.addItemDecoration(stepsDividerItemDecoration);
-        viewBinding.recyclerViewSteps.setAdapter(stepsAdapter);
     }
 
     @Override
@@ -109,11 +88,11 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
                 .recipeDetailComponent().inject(this);
 
         try {
-            listener = (StepsAdapter.OnStepClickListener) getActivity();
+            listener = (RecipeDetailsAdapter.OnStepClickListener) getActivity();
         } catch (ClassCastException exception) {
 
             throw new ClassCastException("Activity must implement " +
-                    StepsAdapter.OnStepClickListener.class.getSimpleName());
+                    RecipeDetailsAdapter.OnStepClickListener.class.getSimpleName());
         }
     }
 
@@ -173,5 +152,5 @@ public class RecipeDetailFragment extends Fragment implements StepsAdapter.OnSte
         });
     }
 
-    interface FragmentCallbacks extends StepsAdapter.OnStepClickListener{}
+    interface FragmentCallbacks extends RecipeDetailsAdapter.OnStepClickListener{}
 }

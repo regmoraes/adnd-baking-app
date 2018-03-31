@@ -14,4 +14,12 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         tools:text="Ingredient" />
+
+    <TextView
+        android:id="@+id/textView_ingredient_quantity_and_measure"
+        style="@style/widget_recipe_ingredients_adapterItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_color_primary"
+        tools:text="400 G" />
 </LinearLayout>

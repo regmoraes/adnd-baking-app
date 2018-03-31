@@ -63,7 +63,7 @@ public class StepDetailActivity extends AppCompatActivity {
     private void setUpStepsTabs(List<Step> steps) {
 
         StepDetailPageAdapter stepDetailPageAdapter = new StepDetailPageAdapter(this,
-                getSupportFragmentManager().get, steps);
+                getSupportFragmentManager(), steps);
 
         viewBinding.pager.setAdapter(stepDetailPageAdapter);
         viewBinding.tabLayout.setupWithViewPager(viewBinding.pager);

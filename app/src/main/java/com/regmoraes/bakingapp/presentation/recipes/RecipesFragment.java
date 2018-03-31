@@ -1,16 +1,18 @@
 package com.regmoraes.bakingapp.presentation.recipes;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.regmoraes.bakingapp.R;
 import com.regmoraes.bakingapp.application.BakingApp;
 import com.regmoraes.bakingapp.data.model.Recipe;
 import com.regmoraes.bakingapp.databinding.FragmentRecipesBinding;
@@ -33,6 +35,14 @@ public class RecipesFragment extends Fragment implements RecipesAdapter.OnItemCl
 
     private RecipesAdapter recipesAdapter;
     private SimpleIdlingResource simpleIdlingResource;
+    private boolean isTablet;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        isTablet = context.getResources().getBoolean(R.bool.isTablet);
+    }
 
     @Nullable
     @Override
@@ -46,8 +56,10 @@ public class RecipesFragment extends Fragment implements RecipesAdapter.OnItemCl
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
-        viewBinding.recyclerViewRecipes.setLayoutManager(layoutManager);
+        int spanCount = isTablet ? 2 : 1;
+
+         GridLayoutManager gridLayoutManager = new GridLayoutManager(view.getContext(), spanCount);
+        viewBinding.recyclerViewRecipes.setLayoutManager(gridLayoutManager);
 
         recipesAdapter = new RecipesAdapter(this);
         viewBinding.recyclerViewRecipes.setAdapter(recipesAdapter);

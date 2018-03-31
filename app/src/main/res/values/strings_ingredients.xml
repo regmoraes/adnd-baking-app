@@ -1,6 +1,6 @@
 <resources>
     <!--Ingredient title in the format: Quantity Measure of Ingredient
     Ex.: 1 TSP of Flour -->
-    <string name="ingredient_title">%1$.2f %2$s of %3$s</string>
+    <string name="ingredient_quantity_and_measure">%1$.2f %2$s</string>
     <string name="ingredient_list_title">Ingredients</string>
 </resources>

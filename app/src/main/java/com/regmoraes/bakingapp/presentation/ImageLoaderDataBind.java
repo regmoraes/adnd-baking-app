@@ -1,11 +1,12 @@
 package com.regmoraes.bakingapp.presentation;
 
 import android.databinding.BindingAdapter;
+import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
-import com.regmoraes.bakingapp.R;
 
 
 /**
@@ -13,15 +14,20 @@ import com.regmoraes.bakingapp.R;
  **/
 public final class ImageLoaderDataBind {
 
-    @BindingAdapter("databind:imageUrlPath")
-    public static void loadPicture(ImageView view, String imageUrl) {
+    @BindingAdapter({"bind:imageUrl", "bind:placeholder"})
+    public static void loadPicture(ImageView view, String imageUrl, Drawable placeholder) {
 
+        RequestManager defaultRequest = Glide.with(view.getContext());
 
-        Glide.with(view.getContext())
-                .setDefaultRequestOptions(
-                        new RequestOptions()
-                                .placeholder(R.drawable.ic_chef_hat_and_fork)
-                )
+        if (placeholder != null) {
+
+            defaultRequest.setDefaultRequestOptions(
+                    new RequestOptions()
+                            .placeholder(placeholder)
+            );
+        }
+
+        defaultRequest
                 .load(imageUrl)
                 .into(view);
     }

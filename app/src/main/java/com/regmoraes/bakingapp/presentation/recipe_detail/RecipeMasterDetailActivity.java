@@ -23,7 +23,7 @@ public class RecipeMasterDetailActivity extends AppCompatActivity
 
     private ActivityRecipeDetailBinding viewBinding;
 
-    private boolean twoPane;
+    private boolean isTablet;
 
     private Recipe recipeExtra;
     private String toolbarTitle;
@@ -34,7 +34,7 @@ public class RecipeMasterDetailActivity extends AppCompatActivity
 
         viewBinding = DataBindingUtil.setContentView(this, R.layout.activity_recipe_detail);
 
-        twoPane = viewBinding.getRoot().findViewById(R.id.container_step_detail) != null;
+        isTablet = getResources().getBoolean(R.bool.isTablet);
 
         setExtras();
 
@@ -81,7 +81,7 @@ public class RecipeMasterDetailActivity extends AppCompatActivity
     @Override
     public void onStepClicked(Step step) {
 
-        if(twoPane) {
+        if(isTablet) {
 
             StepDetailFragment stepDetailFragment =
                     StepDetailFragment.newInstance(step);
