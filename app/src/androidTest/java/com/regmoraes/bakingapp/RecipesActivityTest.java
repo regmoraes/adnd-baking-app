@@ -54,7 +54,7 @@ public class RecipesActivityTest {
     @Test
     public void clickOnRecipe_opensRecipeDetails() {
 
-        onView(withId(R.id.recipes_fragment))
+        onView(withId(R.id.recyclerView_recipes))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         intended(allOf(hasComponent(RecipeMasterDetailActivity.class.getName()), isInternal()));

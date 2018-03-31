@@ -18,6 +18,7 @@ public class InstrumentationTestDataMock {
 
     public static Recipe getRecipeDataMock() {
 
+        //language=JSON
         String recipeJson = "{\n" +
                 "  \"id\": 1,\n" +
                 "  \"name\": \"Nutella Pie\",\n" +
