@@ -94,6 +94,7 @@ public class RecipeMasterDetailActivity extends AppCompatActivity
 
             Intent stepDetailIntent = new Intent(this, StepDetailActivity.class);
             stepDetailIntent.putParcelableArrayListExtra(Step.class.getSimpleName(), recipeExtra.getSteps());
+            stepDetailIntent.putExtra(Intent.EXTRA_UID, step.getId());
 
             startActivity(stepDetailIntent);
         }

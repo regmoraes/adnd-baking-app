@@ -1,5 +1,6 @@
 package com.regmoraes.bakingapp.presentation.step_detail;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,7 +12,6 @@ import android.support.v7.widget.Toolbar;
 import com.regmoraes.bakingapp.R;
 import com.regmoraes.bakingapp.data.model.Step;
 import com.regmoraes.bakingapp.databinding.ActivityStepDetailBinding;
-import com.regmoraes.bakingapp.presentation.SimpleIdlingResource;
 
 import java.util.List;
 
@@ -21,15 +21,8 @@ import java.util.List;
 public class StepDetailActivity extends AppCompatActivity {
 
     private ActivityStepDetailBinding viewBinding;
-
-    private StepDetailPageAdapter stepDetailPageAdapter;
-    private ActionBar supportActionBar;
-
-    private Bundle extras;
     private List<Step> stepsExtra;
-
-    // The Idling Resource which will be null in production.
-    @Nullable private SimpleIdlingResource mIdlingResource;
+    private int selectedStepIdExtra;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,10 +40,11 @@ public class StepDetailActivity extends AppCompatActivity {
 
     private void setExtras() {
 
-        extras = getIntent().getExtras();
+        Bundle extras = getIntent().getExtras();
 
         if(extras != null) {
             stepsExtra = extras.getParcelableArrayList(Step.class.getSimpleName());
+            selectedStepIdExtra = extras.getInt(Intent.EXTRA_UID);
         }
     }
 
@@ -58,7 +52,7 @@ public class StepDetailActivity extends AppCompatActivity {
 
         setSupportActionBar((Toolbar) viewBinding.toolbar);
 
-        supportActionBar = getSupportActionBar();
+        ActionBar supportActionBar = getSupportActionBar();
 
         if(supportActionBar != null) {
             supportActionBar.setTitle(R.string.step_detail_activity_title);
@@ -68,44 +62,16 @@ public class StepDetailActivity extends AppCompatActivity {
 
     private void setUpStepsTabs(List<Step> steps) {
 
-        stepDetailPageAdapter = new StepDetailPageAdapter(this,
-                getSupportFragmentManager(), steps);
+        StepDetailPageAdapter stepDetailPageAdapter = new StepDetailPageAdapter(this,
+                getSupportFragmentManager().get, steps);
 
         viewBinding.pager.setAdapter(stepDetailPageAdapter);
         viewBinding.tabLayout.setupWithViewPager(viewBinding.pager);
 
-        TabLayout.Tab initialTab = viewBinding.tabLayout.getTabAt(0);
+        TabLayout.Tab selectedStepTab = viewBinding.tabLayout.getTabAt(selectedStepIdExtra);
 
-        if(initialTab != null) initialTab.select();
-
-//        if(extras != null) {
-//
-//            final int recipeId = extras.getInt(EXTRA_RECIPE_ID);
-//            final int stepId = extras.getInt(EXTRA_STEP_ID);
-//
-//            final Integer previousStepId;
-//
-//            if(extras.containsKey(EXTRA_PREVIOUS_STEP)) {
-//                previousStepId = extras.getInt(EXTRA_PREVIOUS_STEP);
-//            } else {
-//                previousStepId = null;
-//            }
-//
-//            final Integer nextStepId;
-//
-//            if(extras.containsKey(EXTRA_NEXT_STEP)) {
-//                nextStepId = extras.getInt(EXTRA_NEXT_STEP);
-//            } else {
-//                nextStepId = null;
-//            }
-//
-//            StepDetailFragment stepDetailFragment =
-//                    StepDetailFragment.newInstance(recipeId, stepId, previousStepId, nextStepId);
-//
-//            getSupportFragmentManager()
-//                    .beginTransaction()
-//                    .add(R.id.container_step_detail, stepDetailFragment)
-//                    .commit();
-//        }
+        if(selectedStepIdExtra >= 0 && selectedStepTab != null) {
+            selectedStepTab.select();
+        }
     }
 }

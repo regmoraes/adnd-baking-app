@@ -16,6 +16,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 import com.regmoraes.bakingapp.data.model.Step;
 import com.regmoraes.bakingapp.databinding.FragmentStepDetailBinding;
 
@@ -47,10 +48,6 @@ public class StepDetailFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(savedInstanceState != null){
-            playerTimePosition = savedInstanceState.getLong(EXTRA_PLAYER_TIME_POSITION, 0L);
-        }
-
         if(getArguments() != null) {
             stepExtra = getArguments().getParcelable(Step.class.getSimpleName());
         }
@@ -72,12 +69,30 @@ public class StepDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if(getArguments() != null) {
+        if (getArguments() != null && stepExtra != null) {
+            viewBinding.setStep(stepExtra);
+        }
 
-            if(stepExtra != null) {
-                viewBinding.setStep(stepExtra);
-                setUpPlayer(stepExtra.getVideoURL());
-            }
+        if(savedInstanceState != null){
+            playerTimePosition = savedInstanceState.getLong(EXTRA_PLAYER_TIME_POSITION, 0L);
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if (Util.SDK_INT > 23 && stepExtra != null) {
+            setUpPlayer(stepExtra.getVideoURL());
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if ((Util.SDK_INT <= 23 || exoPlayer == null) && stepExtra != null) {
+            setUpPlayer(stepExtra.getVideoURL());
         }
     }
 
@@ -107,11 +122,21 @@ public class StepDetailFragment extends Fragment {
                 .createMediaSource(uri);
     }
 
+
     @Override
     public void onPause() {
         super.onPause();
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
+    }
 
-        if(exoPlayer != null) exoPlayer.stop();
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+        }
     }
 
     @Override
@@ -123,10 +148,11 @@ public class StepDetailFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        if(exoPlayer !=null) exoPlayer.release();
+    private void releasePlayer() {
+        if (exoPlayer != null) {
+            playerTimePosition = exoPlayer.getCurrentPosition();
+            exoPlayer.stop();
+            exoPlayer.release();
+        }
     }
 }

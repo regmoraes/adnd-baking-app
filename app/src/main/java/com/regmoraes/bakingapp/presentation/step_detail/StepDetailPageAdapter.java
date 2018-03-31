@@ -37,4 +37,6 @@ public final class StepDetailPageAdapter extends FragmentStatePagerAdapter {
 
         return String.format(context.getString(R.string.step_number), steps.get(position).getId());
     }
+
+
 }
